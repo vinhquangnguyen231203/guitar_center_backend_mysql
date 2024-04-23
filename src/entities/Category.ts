@@ -112,5 +112,6 @@ export default class Category{
         } catch (error) {
             throw error;
         }
+        return false;
     }
 }

@@ -3,13 +3,17 @@ import * as sql from 'mssql';
 async function connectToSqlServer() : Promise<sql.ConnectionPool> {
     try{
         const config = {
-            user: 'vinhquang',
-            password: '231203',
+            user: 'admin',
+            password: 'Minhtien1',
             server: 'localhost',
             database: 'GuitarCenter',
             port: 1433,
             options: {
                 encrypt: false
+            },
+            dialect: "mssql",
+            dialectOptions: {
+            instanceName: "SQLEXPRESS"
             }
         }
     

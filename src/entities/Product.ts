@@ -4,14 +4,14 @@ export default class Product{
     //Fields
     private productId: string;
     private productName: string;
-    private unit: string;
+    private unit: number;
     private price: number;
     private image: string;
     private categoryId: string;
     private description: string;
 
     //Constructor
-    public constructor({productId, productName, unit, price, image, categoryId, description}: {productId: string, productName: string, unit: string, price: number, image: string, categoryId: string, description: string}) {
+    public constructor({productId, productName, unit, price, image, categoryId, description}: {productId: string, productName: string, unit: number, price: number, image: string, categoryId: string, description: string}) {
         this.productId = productId;
         this.productName = productName;
         this.unit = unit;
@@ -113,7 +113,7 @@ export default class Product{
             throw error;
         }
     }
-    public async deleteProduct(productId: string): Promise<boolean>{
+    public static async deleteProduct(productId: string): Promise<boolean>{
         try {
             const pool = await connectToSqlServer();
 
@@ -152,6 +152,26 @@ export default class Product{
             throw error;
         }
     }
+
+    public static async findByOrderId(productId: string): Promise<Product|null>{
+        try {
+            const pool = await connectToSqlServer();
+            const result = await pool.request()
+            .input(`productId`,productId)
+            .query('SELECT * FROM OrderDetails WHERE productId = @productId');
+            await pool.close();
+
+            if(result.recordset.length > 0){
+                const product: Product = new Product(result.recordset[0]);
+                return product;
+            }
+            return null;
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
     public static async getProductImage(productId: string): Promise<string | null> {
         try {
             const pool = await connectToSqlServer();
