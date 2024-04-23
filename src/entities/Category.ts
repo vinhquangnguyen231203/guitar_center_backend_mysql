@@ -12,7 +12,7 @@ export default class Category{
         this.categoryName = categoryName;
     }
 
-    static async getAllCategory(): Promise<Category[]>
+    public static async getAllCategory(): Promise<Category[]>
     {
         try{
             //Kết nối đến cơ sở dữ liệu
@@ -38,7 +38,7 @@ export default class Category{
         }
     }
 
-    static async getCategoryById(categoryId: string): Promise<Category | null>
+    public static async getCategoryById(categoryId: string): Promise<Category | null>
     {
         try {
             // Kết nối đến cơ sở dữ liệu
@@ -47,6 +47,9 @@ export default class Category{
             const result = await pool.request()
                 .input('categoryId', categoryId)
                 .query('SELECT * FROM Category WHERE categoryId = @categoryId');
+
+            await pool.close();
+            
             if(result.recordset.length > 0)
             {
                 const categoryData = result.recordset[0];
@@ -54,6 +57,57 @@ export default class Category{
                 return categories;
             }
             return null;
+
+        } catch (error) {
+            throw error;
+        }
+    }
+    public static async insertCategory(category: Category): Promise<boolean>{
+        try {
+            const pool = await connectToSqlServer();
+
+            const result = await pool.request()
+                .input('categoryId', category.categoryId)
+                .input('categoryName', category.categoryName)
+                .query("INSERT INTO Category (categoryId, categoryName) VALUES (@categoryId, @categoryName)");
+
+            if(result.rowsAffected || result.rowsAffected[0] === 1){
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            throw error;
+        }
+        
+    }
+    public static async updateCategory(category: Category): Promise<boolean>{
+        try {
+            const pool = await connectToSqlServer();
+
+            const result = await pool.request()
+                .input('categoryId', category.categoryId)
+                .input('categoryName', category.categoryName)
+                .query("Update Category SET categoryName = @categoryName WHERE categoryId = @categoryId");
+
+            if(result.rowsAffected || result.rowsAffected[0] === 1){
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            throw error;
+        }
+    }
+    public static async deleteCategory(categoryId: string): Promise<boolean>{
+        try {
+            const pool = await connectToSqlServer();
+
+            const result = await pool.request()
+                .input('categoryId', categoryId)
+                .query('DELETE FROM Category WHERE categoryId = @categoryId');
+            
+            await pool.close();
 
         } catch (error) {
             throw error;
