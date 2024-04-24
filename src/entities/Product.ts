@@ -131,7 +131,7 @@ export default class Product{
             throw error;
         }
     }
-    public static async findByCategory(categoryId: string): Promise<Product | null> {
+    public static async findByCategory(categoryId: string): Promise<Product[]| null> {
         try {
             const pool = await connectToSqlServer();
 
@@ -143,8 +143,12 @@ export default class Product{
             
             
             if(result.recordset.length > 0){
-                const product: Product = new Product(result.recordset[0]);
-                return product;
+                const products: Product[] = result.recordset.map(
+                    (item: any) => {
+                        return new Product(item);
+                    }
+                );
+                return products;
             }
             return null;
 
@@ -153,7 +157,7 @@ export default class Product{
         }
     }
 
-    public static async findByOrderId(productId: string): Promise<Product|null>{
+    public static async findByOrderId(productId: string): Promise<Product[]|null>{
         try {
             const pool = await connectToSqlServer();
             const result = await pool.request()
@@ -161,9 +165,14 @@ export default class Product{
             .query('SELECT * FROM OrderDetails WHERE productId = @productId');
             await pool.close();
 
+              
             if(result.recordset.length > 0){
-                const product: Product = new Product(result.recordset[0]);
-                return product;
+                const products: Product[] = result.recordset.map(
+                    (item: any) => {
+                        return new Product(item);
+                    }
+                );
+                return products;
             }
             return null;
 
