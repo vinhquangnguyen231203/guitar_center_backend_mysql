@@ -1,11 +1,16 @@
 import express from "express";
 import bodyParser from "body-parser";
 import productRouter from "./boundaries/ProductRouter";
+import userRouter from "./boundaries/UserRouter";
+
 
 const api = express.Router();
 api.use(bodyParser.json())
 
 api.use(`/products`, productRouter);
+
+api.use(`/users`, userRouter);
+
 
 api.all("/*", (req, res) => {
     let data = {

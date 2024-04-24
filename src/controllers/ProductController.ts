@@ -47,7 +47,7 @@ export const insertProduct = async (req: Request, res: Response): Promise<any> =
             }
         const result =  await Product.insertProduct(productData);
         if(result){
-            return res.json({inserSuccess:true});
+            return res.json({insertSuccess:true});
         }else{
             return res.status(401).json(`Failed to insert product ${productId}`);
         }
