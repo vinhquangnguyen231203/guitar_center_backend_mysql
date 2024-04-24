@@ -3,6 +3,11 @@ import bodyParser from "body-parser";
 import api from "./src/routes";
 import session from "express-session";
 import cors from "cors";
+import path from 'path';
+
+
+
+
 
 const port = 3333;
 const app: Express = express();
@@ -28,6 +33,9 @@ app.use(cors({
 // Sử dụng các tuyến đường API
 app.use('/api', api);
 
+//lấy chỉ mục img
+export const imgDirectory = path.resolve(__dirname, '..', 'img');
+console.log(imgDirectory);
 // Lắng nghe trên cổng
 app.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);

@@ -76,7 +76,7 @@ export default class Product{
                 .input('image', product.image)
                 .input('categoryId', product.categoryId)
                 .input('description', product.description)
-                .query('INSERT INTO PRODUCT (productId, productName, unit, price, image, categoryId, description) VALUES (@productId, @productName, @unit, @price, @image, @categoryId, @description)');
+                .query(`INSERT INTO PRODUCT (productId, productName, unit, price, image, categoryId, description) VALUES (@productId, @productName, @unit, @price, @image, @categoryId, @description)`);
 
             await pool.close();
 

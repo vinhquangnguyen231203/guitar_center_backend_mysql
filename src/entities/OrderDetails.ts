@@ -17,7 +17,7 @@ export default class OrderDetails {
     }
 
     //Methods:
-    static async getOrderDetailsByOrderId(orderId: string): Promise<OrderDetails | null>{
+    static async getOrderDetailsByOrderId(orderId: string): Promise<OrderDetails[] | null>{
         try {
             const pool = await connectToSqlServer();
 
@@ -28,9 +28,9 @@ export default class OrderDetails {
             await pool.close();
 
             if(result.recordset.length > 0) {
-                const orderDetailsData = result.recordset[0];
-                const orderDetails: OrderDetails = new OrderDetails(orderDetailsData);
-
+                const orderDetails: OrderDetails[] = result.recordset.map((item: any) => {
+                    return new OrderDetails(item);
+                })
                 return orderDetails;
             }
             
@@ -39,10 +39,12 @@ export default class OrderDetails {
             throw error;
         }
     }
+
     static async insertOrderDetails(orderDetails: OrderDetails): Promise <boolean> {
         try {
             const pool = await connectToSqlServer();
 
+            
             const result = await pool.request()
                 .input('price',orderDetails.orderId)
                 .input('unit',orderDetails.unit)

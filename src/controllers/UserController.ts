@@ -146,3 +146,19 @@ export const logoutUser = async (req: Request, res: Response): Promise<any> => {
     return res.status(400).json({ error: error.message });
   }
 }
+
+export const checkLoginStatus = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const username = (req.session as any).user;
+
+    if(username){
+      return res.status(200).json({loginStatus:true});
+    }else{
+      return res.status(404).json({loginStatus:false});
+    }
+    
+  } catch (error:any) {
+    return res.status(400).json({ error: error.message });
+
+  }
+}

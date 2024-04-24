@@ -7,16 +7,16 @@ export default class Order {
     //Fields
     private orderId: string;
     private address: string;
-    private orderDate: string;
+    private orderDate: Date;
     private phone: string;
     private status: string;
-    private totalPrice: string;
+    private totalPrice: number;
     private username: string;
 
     
 
     //Constructors
-    public constructor({orderId, address, orderDate, phone, status, totalPrice, username}: {orderId: string, address: string, orderDate: string, phone: string, status: string, totalPrice: string, username: string}) {
+    public constructor({orderId, address, orderDate, phone, status, totalPrice, username}: {orderId: string, address: string, orderDate: Date, phone: string, status: string, totalPrice: number, username: string}) {
         this.orderId = orderId;
         this.address = address;
         this.orderDate = orderDate;
@@ -46,7 +46,7 @@ export default class Order {
             throw error;
         }
     }
-    static async getOrderByUsername(username: string): Promise<Order | null> {
+    static async getOrderByUsername(username: string): Promise<Order[] | null> {
         try {
             const pool = await connectToSqlServer();
             
@@ -55,8 +55,11 @@ export default class Order {
                 .query('SELECT * FROM Orders WHERE username = @username');
             
             if(result.recordset.length > 0) {
-                const orderData = result.recordset[0];
-                const orders: Order = new Order(orderData);
+                const orders: Order[] = result.recordset.map(
+                    (item: any) => {
+                        return new Order(item);
+                    }
+                );
                 return orders;
             }
             return null;
@@ -94,10 +97,11 @@ export default class Order {
                 .input('address', order.address)
                 .input('orderDate', order.orderDate)
                 .input('phone', order.phone)
+                .input('status', order.status)
                 .input('totalPrice', order.totalPrice)
                 .input('username', order.username)
-                .query(`INSERT INTO Orders (orderId, address, orderDate, phone, totalPrice, username) 
-                        VALUES (@orderId, @address, @orderDate, @phone, @totalPrice, @username)`);
+                .query(`INSERT INTO Orders (orderId, address, orderDate, phone, status, totalPrice, username) 
+                        VALUES (@orderId, @address, @orderDate, @phone, @status, @totalPrice, @username)`);
     
             await pool.close();
     
@@ -113,14 +117,14 @@ export default class Order {
             throw error;
         }
     }
-    static async updateStatusOrder(order: Order): Promise<boolean> {
+    static async updateStatusOrder(orderId: string, status: string): Promise<boolean> {
         try {
             const pool = await connectToSqlServer();
             
             // Cập nhật trạng thái của đơn hàng trong cơ sở dữ liệu
             const result = await pool.request()
-                .input('orderId', order.orderId)
-                .input('status', order) // Giả sử trạng thái của đơn hàng được lưu trong thuộc tính status của đối tượng Order
+                .input('orderId', orderId)
+                .input('status', status) // Giả sử trạng thái của đơn hàng được lưu trong thuộc tính status của đối tượng Order
                 .query(`UPDATE Orders SET status = @status WHERE orderId = @orderId`);
     
             await pool.close();

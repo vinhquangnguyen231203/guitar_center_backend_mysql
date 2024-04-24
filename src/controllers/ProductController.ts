@@ -125,6 +125,7 @@ export const getProductByCategoryId = async (req: Request, res: Response): Promi
     }
 }
 
+import { imgDirectory } from "../..";
 export const getImage = async (req: Request, res: Response): Promise<any> =>{
     try {
         const {productId} = req.params;
@@ -134,7 +135,7 @@ export const getImage = async (req: Request, res: Response): Promise<any> =>{
         }
         const imageProduct: string| any = await Product.getProductImage(productId);
         
-        const imagePath =  `${__dirname}/img/${imageProduct}`
+        const imagePath =  `${imgDirectory}/${imageProduct}`
 
       return  res.sendFile(imagePath);
   
