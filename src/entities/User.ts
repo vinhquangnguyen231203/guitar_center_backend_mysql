@@ -117,9 +117,9 @@ export default class User{
                 .input('fullname', user.fullname)
                 .input('phone', user.phone)
                 .input('address', user.address)
-                .input('gender', user.gender)
+            
                 .input('birth', user.birth)
-                .query('UPDATE Users SET password = @password, fullname = @fullname,phone = @phone, address = @address, gender = @gender, birth = @birth WHERE username = @username');
+                .query('UPDATE Users SET password = @password, fullname = @fullname,phone = @phone, address = @address, birth = @birth WHERE username = @username');
 
             await pool.close();
 
@@ -128,6 +128,25 @@ export default class User{
             }
             return false;
 
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    public static async deleteUser(username: string): Promise<boolean>{
+        try {
+            const pool = await connectToSqlServer();
+
+            const result = await pool.request()
+                .input('username', username)
+                .query('DELETE FROM Users WHERE username = @username');
+
+            await pool.close();
+
+            if(result.rowsAffected || result.rowsAffected[0] === 1){
+                return true;
+            }
+            return false;
         } catch (error) {
             throw error;
         }

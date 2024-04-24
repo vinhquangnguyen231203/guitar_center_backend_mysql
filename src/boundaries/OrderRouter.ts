@@ -18,8 +18,13 @@ orderRouter.get(`/my-orders`, orderController.getOrderByUsernameWithSession)
 //người dùng xem chi tiết đơn  với session
 orderRouter.get(`/my-orders/:orderId`, orderController.getOrderDetailsByOrderIdWithSession)
 
+//admin xem chi tiết đơn hàng của đơn hàng
+orderRouter.get(`/detail/:orderId`, orderController.getOrderDetailsByOrderId);
 
 //admin cập nhật trạng thái đơn hàng
 orderRouter.put(`/:orderId`, orderController.updateOrderStatus);
+
+//admin xóa đơn hàng
+orderRouter.delete(`/delete/:orderId`, orderController.deleteOrder);
 
 export default orderRouter;

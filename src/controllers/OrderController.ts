@@ -66,6 +66,22 @@ export const getOrderDetailsByOrderIdWithSession = async (req: Request, res: Res
                 .json({error: error.message})
     }
 }
+
+export const getOrderDetailsByOrderId = async (req: Request, res: Response): Promise<any> => {
+    const {orderId} = req.params;
+
+    try {
+        const orderDetails = await OrderDetails.getOrderDetailsByOrderId(orderId);
+        if (orderDetails) {
+            return res.json(orderDetails);
+        }
+    } catch (error: any) {
+        return res
+                .status(404)
+                .json({error: error.message})
+    }
+}
+
 export const insertOrderWithSession = async (req: Request, res: Response): Promise<any> => {
     const {order, orderDetails} = req.body;
 
@@ -187,4 +203,18 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<an
                 .json({error: error.message})
     }
 }
+
+export const deleteOrder = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const {orderId} = req.params;
+        const orderExist : Order|any = await Order.getOrderById(orderId);
+        if(!orderExist){
+            return res.status(404).json({ error: `Product ${orderId} does not exists` });
+        }
+        await Order.deleteOrder(orderId);
+       return res.json({delete: true});
+    } catch (error:any) {
+        return res.status(400).json({ error: error.message });
+    };
+};
 
